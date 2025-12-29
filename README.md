@@ -1,4 +1,4 @@
-# Trenatra Backend
+# Tenatra Backend
 
 FastAPI backend with authentication.
 

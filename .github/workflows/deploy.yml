@@ -1,0 +1,46 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            # Navigate to the app directory
+            cd /home/ubuntu/tenatra_backend
+
+            # Pull the latest changes
+            git pull origin main
+
+            # Activate virtual environment
+            source .venv/bin/activate
+
+            # Install/update dependencies
+            pip install -e .
+
+            # Run database migrations (if any new models)
+            python create_db.py
+
+            # Restart the FastAPI application using systemd
+            sudo systemctl restart tenatra
+
+            # Alternative: If using PM2 with uvicorn
+            # pm2 restart tenatra --interpreter python3 -- -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+            # Alternative: If using supervisor
+            # sudo supervisorctl restart tenatra

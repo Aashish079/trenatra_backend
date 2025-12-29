@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .routers import auth_router
 
-app = FastAPI(title="Trenatra API", version="0.1.0")
+app = FastAPI(title="tenatra API", version="0.1.0")
 
 # CORS middleware
 app.add_middleware(
@@ -20,4 +20,4 @@ app.include_router(auth_router, prefix="/auth", tags=["auth"])
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to Trenatra API"}
+    return {"message": "Welcome to tenatra API"}
