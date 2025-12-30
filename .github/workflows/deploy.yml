@@ -22,7 +22,7 @@ jobs:
           port: 22
           script: |
             # Navigate to the app directory
-            cd /home/ubuntu/tenatra_backend
+            cd /home/ubuntu/trenatra_backend
 
             # Pull the latest changes
             git pull origin main
@@ -36,11 +36,5 @@ jobs:
             # Run database migrations (if any new models)
             python create_db.py
 
-            # Restart the FastAPI application using systemd
-            sudo systemctl restart tenatra
-
-            # Alternative: If using PM2 with uvicorn
-            # pm2 restart tenatra --interpreter python3 -- -m uvicorn app.main:app --host 0.0.0.0 --port 8000
-
-            # Alternative: If using supervisor
-            # sudo supervisorctl restart tenatra
+            # Restart the FastAPI application using PM2
+            pm2 restart tenatra || pm2 start "uvicorn app.main:app --host 0.0.0.0 --port 8000" --name tenatra
