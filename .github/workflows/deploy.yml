@@ -36,5 +36,15 @@ jobs:
             # Run database migrations (if any new models)
             python create_db.py
 
-            # Restart the FastAPI application using PM2
-            pm2 restart tenatra || pm2 start "uvicorn app.main:app --host 0.0.0.0 --port 8000" --name tenatra
+            # Stop existing PM2 process gracefully
+            pm2 stop tenatra || true
+
+            # Kill any remaining process on port 8000
+            sudo lsof -ti:8000 | xargs -r sudo kill -9 || true
+
+            # Delete and restart PM2 process
+            pm2 delete tenatra || true
+            pm2 start "uvicorn app.main:app --host 0.0.0.0 --port 8000" --name tenatra
+
+            # Save PM2 process list
+            pm2 save
